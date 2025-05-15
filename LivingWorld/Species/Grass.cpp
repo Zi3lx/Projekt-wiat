@@ -20,12 +20,13 @@ void Grass::action(World* world) {
 
     // Nowe trawy
     vector<Position> freePositions = world->getVectorOfFreePositionsAround(myPos);
-    if (rand() % 5 == this->getPowerToReproduce() && !freePositions.empty()) {
+    if (rand() % 4 == this->getPowerToReproduce() && !freePositions.empty()) {
         int randomPos = rand() % freePositions.size();
         Organism* newGrass = new Grass(*this);
 
         newGrass->setPosition(freePositions[randomPos]);
         newGrass->setLiveLength(6);
+        newGrass->addAncestor(world->getTurn(), world->getTurn() + newGrass->getLiveLength());
         
         world->addOrganism(newGrass);
     }

@@ -41,10 +41,7 @@ void Wolf::action(World* world)
                 if (organismToEat && dynamic_cast<IMeatEatable*>(organismToEat)) 
                 {
                     IMeatEatable* wolfEatable = dynamic_cast<IMeatEatable*>(organismToEat);
-                    Position eatablePos = organismToEat->getPosition();
-                    
-                    wolfEatable->ifMeatEaten(this, 2, world);
-                    
+                    wolfEatable->ifMeatEaten(this, 3, world); 
                     flag = false;
                     break;
                 }
@@ -52,7 +49,7 @@ void Wolf::action(World* world)
         }
     }
 
-    Animal::action(world);
+    if (flag) Animal::action(world);
 
     // Rozmnazanie
     if (this->getPowerToReproduce() < this->getPower())
@@ -67,6 +64,7 @@ void Wolf::action(World* world)
 
             newWolf->setPosition(freePositions[randomPos]);
             newWolf->setPower(newPower);
+            newWolf->addAncestor(world->getTurn(), world->getTurn() + newWolf->getLiveLength());
             world->addOrganism(newWolf);
         }
         return; 

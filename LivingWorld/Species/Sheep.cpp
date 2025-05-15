@@ -37,9 +37,7 @@ void Sheep::action(World* world)
 
                 Plant* organism2 = dynamic_cast<Plant*>(plantToEat);
                 if (organism2 != nullptr) {
-                    Position plantPosition = organism2->getPosition();
                     organism2->ifEaten(this, 1, world);
-                    this->setPosition(plantPosition);
                     flag = false;
                     break;
                 }
@@ -48,12 +46,12 @@ void Sheep::action(World* world)
         }
     }
     
-    Animal::action(world);
+    if (flag) Animal::action(world);
         
     // Sprawdzenie, czy owca ma wystarczającą moc do reprodukcji
     if (this->getPower() > this->getPowerToReproduce()) {
         
-        int newPower = this->getPower() / 2;
+        int newPower = this->getPower() - 1 ;
         this->setPower(newPower);
         
         vector<Position> freePositions = world->getVectorOfFreePositionsAround(myPos);
@@ -64,7 +62,7 @@ void Sheep::action(World* world)
             newSheep->setPosition(freePositions[randomPos]);
             newSheep->setPower(newPower);
             newSheep->setLiveLength(10);
-            newSheep->addAncestor(1, 2);
+            newSheep->addAncestor(world->getTurn(), world->getTurn() + newSheep->getLiveLength());
 
             world->addOrganism(newSheep);
         }
@@ -74,7 +72,7 @@ void Sheep::action(World* world)
 
 void Sheep::ifMeatEaten(Organism* other, int power, World* world)
 {
-    std::cout<< "Owca została zjedzona przez " << other->getSpecies() << std::endl;
+    std::cout << "Tura " << world->getTurn() << " Owca została zjedzona przez " << other->getSpecies() << std::endl;
     other->setPower(other->getPower() + power);
     world->removeOrganism(this);
 }

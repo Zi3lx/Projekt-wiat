@@ -21,11 +21,12 @@ void Mlecz::action(World* world)
 
     // Nowe mlecze
     Position freePositions = world->getRandomFreePosition();
-    if (rand() % 5 == this->getPowerToReproduce()) {
+    if (rand() % 4 == this->getPowerToReproduce()) {
         Organism* newGrass = new Mlecz(*this);
 
         newGrass->setPosition(freePositions);
         newGrass->setLiveLength(6);
+        newGrass->addAncestor(world->getTurn(), world->getTurn() + newGrass->getLiveLength());
 
         world->addOrganism(newGrass);
     }

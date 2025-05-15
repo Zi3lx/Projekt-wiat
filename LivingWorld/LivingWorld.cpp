@@ -206,7 +206,7 @@ void test_ecosystem()
     }
     
     // Trawa
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 35; i++) {
         int x = rand() % ecoWorld->getWorldX();
         int y = rand() % ecoWorld->getWorldY();
         if (ecoWorld->isPositionFree(Position(x, y))) {
@@ -215,7 +215,7 @@ void test_ecosystem()
     }
     
     // Mlecze
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 20; i++) {
         int x = rand() % ecoWorld->getWorldX();
         int y = rand() % ecoWorld->getWorldY();
         if (ecoWorld->isPositionFree(Position(x, y))) {
@@ -224,7 +224,7 @@ void test_ecosystem()
     }
     
     // Muchomory
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 8; i++) {
         int x = rand() % ecoWorld->getWorldX();
         int y = rand() % ecoWorld->getWorldY();
         if (ecoWorld->isPositionFree(Position(x, y))) {
@@ -234,26 +234,23 @@ void test_ecosystem()
     
     cout << "Stan początkowy świata:\n";
     cout << ecoWorld->toString() << endl;
-            
-	int sheepCount = 0;
-	int wolfCount = 0;
-	int grassCount = 0;
-	int mleczCount = 0;
-	int muchomorCount = 0;
 
     for (int i = 1; i <= 50; i++) {
+        int sheepCount = 0;
+        int wolfCount = 0;
+        int grassCount = 0;
+        int mleczCount = 0;
+        int muchomorCount = 0;
+
         ecoWorld->makeTurn();
         cout << "\n--- Tura " << i << " ---\n";
         cout << ecoWorld->toString() << endl;
         
         for (auto org : ecoWorld->getOrganisms()) {
             string species = org->getSpecies();
+            //cout << org->toString() << endl;
             if (species == "S") sheepCount++;
-            else if (species == "W") 
-			{
-				wolfCount++;
-				org->toString();
-			}
+            else if (species == "W") wolfCount++;
             else if (species == "G") grassCount++;
             else if (species == "D") mleczCount++;
             else if (species == "T") muchomorCount++;
@@ -297,6 +294,7 @@ void test_ecosystem()
 
 int main()
 {
+    srand(time(NULL));
 	test_ecosystem();
 	//test_owcy();
 	return 0;

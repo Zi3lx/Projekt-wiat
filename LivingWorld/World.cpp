@@ -1,5 +1,8 @@
 #include "World.h"
 #include <fstream>
+#include <algorithm>
+#include <iostream>
+using namespace std;
 
 string World::getOrganismFromPosition(int x, int y)
 {	
@@ -99,10 +102,16 @@ void World::addOrganism(Organism* organism)
 
 void World::removeOrganism(Organism* organism)
 {
+    cout << "Removing organism: " << organism->getSpecies() << " at " << organism->getPosition().toString() << endl;
+    
     auto it = find(organisms.begin(), organisms.end(), organism);
     if (it != organisms.end()) {
         organisms.erase(it);
+        cout << "About to delete organism memory" << endl;
         delete organism;
+        cout << "Organism deleted successfully" << endl;
+    } else {
+        cout << "Organism not found in collection!" << endl;
     }
 }
 
@@ -113,26 +122,23 @@ void World::makeTurn()
             return a->getInitiative() > b->getInitiative();
         });
 
+	
 	vector<Organism*> currentOrganisms = organisms;
-	vector<Organism*> organismsToRemove;
-    
-    for (Organism* org : currentOrganisms) {
+
+	for (Organism* org : organisms) {
 		org->decreaseLiveLength();
-
 		if (org->getLiveLength() == 0) {
-			organismsToRemove.push_back(org);
-			continue;
+			removeOrganism(org);
 		}
+	}
+	
+	currentOrganisms = organisms;
 
+    for (Organism* org : currentOrganisms) {
         if (find(organisms.begin(), organisms.end(), org) != organisms.end()) {
-			//org->setPower(org->getPower() + 1);
             org->action(this);
         }
     }
-
-	for (Organism* org : organismsToRemove) {
-		removeOrganism(org);
-	}
 	turn++;
 }
 
@@ -233,5 +239,3 @@ string World::toString()
 	return result;
 }
 
-
-// Interfejs
