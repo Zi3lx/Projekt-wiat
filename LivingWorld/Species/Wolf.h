@@ -8,4 +8,7 @@ public:
 
     void action(World* world) override;
     void reproduce(World* world) override;
+    
+    void additionalSerialize(ostream& os) override {};
+    void additionalDeserialize(istream& is) override;
 };

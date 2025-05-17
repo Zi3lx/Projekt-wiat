@@ -15,6 +15,6 @@ class Plant : public Organism, public IEatable, public IReproducible
 
 		void action(World* world) override;
 		void ifEaten(Organism* other, int power, World* world) override;
-		void reproduce(World* world) override;
+		void reproduce(World* world) override = 0;
 };
 

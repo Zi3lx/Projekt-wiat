@@ -7,4 +7,7 @@ public:
 
     void ifEaten(Organism* other, int power, World* world) override;
     void reproduce(World* world) override;
+    
+    void additionalSerialize(ostream& os) override {};
+    void additionalDeserialize(istream& is) override;
 };

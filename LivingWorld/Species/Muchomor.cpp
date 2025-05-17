@@ -38,3 +38,8 @@ void Muchomor::ifEaten(Organism* other, int power, World* world) {
     world->removeOrganism(this);
     world->removeOrganism(other);
 }
+
+void Muchomor::additionalDeserialize(istream& is) 
+{
+    this->setSpecies("T");
+}

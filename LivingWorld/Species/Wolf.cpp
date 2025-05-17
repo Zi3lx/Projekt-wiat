@@ -72,3 +72,8 @@ void Wolf::action(World* world)
 
     reproduce(world);
 }
+
+void Wolf::additionalDeserialize(istream& is) 
+{
+    this->setSpecies("W");
+}

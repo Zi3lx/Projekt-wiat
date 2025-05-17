@@ -15,8 +15,6 @@ void Animal::setLastPosition(Position position)
     lastPosition = position;
 }
 
-void Animal::reproduce(World* world) {}
-
 void Animal::move(World* world)
 {
     vector<Position> possiblePositions = world->getVectorOfFreePositionsAround(this->getPosition());
@@ -31,7 +29,6 @@ void Animal::move(World* world)
 void Animal::action(World* world) 
 {
     move(world);
-    //reproduce(world);
 }
 
 

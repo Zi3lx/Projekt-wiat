@@ -12,92 +12,9 @@
 #include "Species/Mlecz.h"
 #include "Species/Muchomor.h"
 #include "Species/Wolf.h"
+#include "OrganismFactory.h"
 
 using namespace std;
-
-/*
-void test1()
-{
-// Position 
-	Position p1;
-	Position p2{ 1, 1 };
-	Position p3{ -3, -5 };
-
-	//cout << p1.toString() << endl;
-	//cout << p2.toString() << endl;
-	//cout << p3.toString() << endl;
-	//cout << p1.distance(p2) << endl;
-	//p2.move(4, 6);
-	//cout << p2.toString() << endl;
-
-	// Organism
-	//Organism org1;
-	//Organism org2{ 10, p2 };
-
-	//cout << org1.toString() << endl;
-	//cout << org2.toString() << endl;
-	//org1.move(2, 3);
-	//cout << org1.toString() << endl;
-
-	// Plant & Animal
-	Plant plant{ 3, p3 };
-	Animal animal{ 5, p2 };
-	Plant plant2;
-	Animal animal2;
-	plant.addAncestor(1, 2);
-
-	cout << plant.toString() << endl;
-	cout << animal.toString() << endl;
-	cout << plant2.toString() << endl;
-	cout << animal2.toString() << endl;
-	plant.move(3, 4);
-	cout << plant.toString() << endl;
-	animal.move(1, 2);
-	cout << animal.toString() << endl;
-	
-	// World test
-	World world;
-	Position posP1{ 4, 5 };
-	Plant plantW1{ 3, posP1 };
-	Position posP2{ 5, 4 };
-	Plant plantW2{ 3, posP2 };
-
-	Position posW2{ 3, 2 };
-	Animal animalW1{ 6, posW2 };
-	Position posW3{ 2, 3 };
-	Animal animalW2{ 6, posW3 };
-
-	world.addOrganism(&plantW1);
-	world.addOrganism(&plantW2);
-	world.addOrganism(&animalW1);
-	world.addOrganism(&animalW2);
-
-	auto positions = world.getVectorOfFreePositionsAround(Position(5, 5));
-
-	for(auto pos: positions)
-		cout << pos.toString() << endl;
-
-	// Tura 0
-	cout << world.toString() << endl;
-
-	// Tura 1
-	world.makeTurn();
-	cout << world.toString() << endl;
-
-	// Tura 2
-	world.makeTurn();
-	cout << world.toString() << endl;
-
-	world.writeWorld("world.bin");
-
-	// Tura 3
-	world.makeTurn();
-	cout << world.toString() << endl;
-
-	// powrot do Tury 2
-	world.readWorld("world.bin");
-	cout << world.toString() << endl;}
-*/
 
 void test_owcy()
 {
@@ -176,7 +93,7 @@ void test_owcy()
 			sheepWorld->addOrganism(grass);
 		}
 
-		this_thread::sleep_for(std::chrono::seconds(1));
+		this_thread::sleep_for(chrono::seconds(1));
     }
     
     delete sheepWorld;	
@@ -263,7 +180,7 @@ void test_ecosystem()
         cout << "Mlecze: " << mleczCount << endl;
         cout << "Muchomory: " << muchomorCount << endl;
         
-        this_thread::sleep_for(std::chrono::seconds(1));
+        this_thread::sleep_for(chrono::seconds(1));
     }
     
     cout << "\n=== STATYSTYKI KOŃCOWE ===\n";
@@ -292,10 +209,54 @@ void test_ecosystem()
     delete ecoWorld;
 }
 
+void test_serialization() {
+    cout << "\n=== TEST SERIALIZACJI ===\n";
+    
+    World testWorld(10, 10);
+    
+    testWorld.addOrganism(new Sheep(10, Position(2, 3)));
+    testWorld.addOrganism(new Wolf(8, Position(5, 5)));
+    testWorld.addOrganism(new Grass(0, Position(7, 7)));
+    
+    cout << "Stan początkowy świata:\n";
+
+    testWorld.makeTurn();
+    cout << testWorld.toString() << endl;
+    for (auto org : testWorld.getOrganisms()) {
+        cout << org->toString() << endl;
+    }
+
+    testWorld.writeWorld("test_world.bin");
+    
+    for (int i = 0; i < 3; i++) {
+        testWorld.makeTurn();
+        cout << "\n--- Tura " << i + 1 << " ---\n";
+        cout << testWorld.toString() << endl;
+        
+        //Wypisz oranizmy
+        for (auto org : testWorld.getOrganisms()) {
+            cout << org->toString() << endl;
+        }
+
+        this_thread::sleep_for(chrono::seconds(1));
+    }
+    
+    testWorld.readWorld("test_world.bin");
+    
+    cout << "Stan świata po wczytaniu z pliku:\n";
+    cout << testWorld.toString() << endl;
+
+    for (auto org : testWorld.getOrganisms()) {
+        cout << org->toString() << endl;
+    }
+}
+
 int main()
 {
     srand(time(NULL));
-	test_ecosystem();
+    OrganismFactory::initialize();
+    test_serialization();
+	//test_ecosystem();
 	//test_owcy();
 	return 0;
 }

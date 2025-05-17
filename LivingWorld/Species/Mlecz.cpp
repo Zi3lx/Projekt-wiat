@@ -28,3 +28,8 @@ void Mlecz::reproduce(World* world)
         world->addOrganism(newGrass);
     }
 }
+
+void Mlecz::additionalDeserialize(istream& is) 
+{
+    this->setSpecies("D");
+}

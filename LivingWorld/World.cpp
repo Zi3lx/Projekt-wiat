@@ -2,6 +2,8 @@
 #include <fstream>
 #include <algorithm>
 #include <iostream>
+#include "OrganismFactory.h"
+
 using namespace std;
 
 string World::getOrganismFromPosition(int x, int y)
@@ -128,7 +130,7 @@ void World::makeTurn()
         }
     }
     
-   vector<Organism*> organismsToProcess = organisms;
+   vector<Organism*> organismsToProcess = organisms; // Kopia, aby uniknąć problemów z iteracją
     for (Organism* org : organismsToProcess) {
         if (find(organismsToRemove.begin(), organismsToRemove.end(), org) == organismsToRemove.end()) {
             org->action(this);
@@ -155,79 +157,63 @@ vector<Organism*> World::getOrganisms()
 	return this->organisms;
 }
 
-/*
 void World::writeWorld(string fileName)
 {
-	fstream my_file;
-	my_file.open(fileName, ios::out | ios::binary);
-	if (my_file.is_open()) {
-		my_file.write((char*)&this->worldX, sizeof(int));
-		my_file.write((char*)&this->worldY, sizeof(int));
-		my_file.write((char*)&this->turn, sizeof(int));
-		int orgs_size = this->organisms.size();
-		my_file.write((char*)&orgs_size, sizeof(int));
-		for (int i = 0; i < orgs_size; i++) {
-			int data;
-			data = this->organisms[i].getPower();
-			my_file.write((char*)&data, sizeof(int));
-			data = this->organisms[i].getPosition().getX();
-			my_file.write((char*)&data, sizeof(int));
-			data = this->organisms[i].getPosition().getY();
-			my_file.write((char*)&data, sizeof(int));
-			string s_data = this->organisms[i].getSpecies();
-			int s_size = s_data.size();
-			my_file.write((char*)&s_size, sizeof(int));
-			my_file.write(s_data.data(), s_data.size());
-		}
-		my_file.close();
+	ofstream file(fileName);
+	if (!file) {
+		cerr << "Nie można otworzyć pliku do zapisu: " << fileName << endl;
+		return;
 	}
+	
+	file << worldX << " " << worldY << " " << turn << endl;
+	
+	file << organisms.size() << endl;
+	
+	for (Organism* org : organisms) {
+		org->serialize(file);
+	}
+	
+	file.close();
+	cout << "Świat został zapisany do pliku: " << fileName << endl;
 }
 
 void World::readWorld(string fileName)
 {
-	fstream my_file;
-	my_file.open(fileName, ios::in | ios::binary);
-	if (my_file.is_open()) {
-		int result;
-		my_file.read((char*)&result, sizeof(int));
-		this->worldX = (int)result;
-		my_file.read((char*)&result, sizeof(int));
-		this->worldY = (int)result;
-		my_file.read((char*)&result, sizeof(int));
-		this->turn = (int)result;
-		my_file.read((char*)&result, sizeof(int));
-		int orgs_size = (int)result;
-		vector<Organism> new_organisms;
-		for (int i = 0; i < orgs_size; i++) {
-			int power;
-			my_file.read((char*)&result, sizeof(int));
-			power = (int)result;
-
-			int pos_x;
-			my_file.read((char*)&result, sizeof(int));
-			pos_x = (int)result;
-			int pos_y;
-			my_file.read((char*)&result, sizeof(int));
-			pos_y = (int)result;
-			Position pos{ pos_x, pos_y };
-			
-			int s_size;
-			my_file.read((char*)&result, sizeof(int));
-			s_size = (int)result;
-
-			string species;
-			species.resize(s_size);
-			my_file.read((char*)&species[0], s_size);
-			
-			Organism org(power, pos);
-			org.setSpecies(species);
-			new_organisms.push_back(org);
-		}
-		this->organisms = new_organisms;
-		my_file.close();
+	ifstream file(fileName);
+   	if (!file) {
+    	cerr << "Nie można otworzyć pliku do odczytu: " << fileName << endl;
+       	return;
 	}
+
+	for (Organism* org : organisms) {
+		delete org;
+	}
+	organisms.clear();
+	
+	file >> worldX >> worldY >> turn;
+
+	int organismCount;
+	file >> organismCount;
+	
+	for (size_t i = 0; i < organismCount; ++i) {
+		string type;
+		file >> type;
+		
+		Organism* newOrganism = OrganismFactory::createOrganism(type);
+		
+		if (newOrganism) {
+			newOrganism->deserialize(file);
+			organisms.push_back(newOrganism);
+		} else {
+			cerr << "Nieznany typ organizmu: " << type << endl;
+			string line;
+			getline(file, line);
+		}
+	}
+	
+	file.close();
+	cout << "Świat został wczytany z pliku: " << fileName << endl;
 }
-	*/
 
 string World::toString()
 {

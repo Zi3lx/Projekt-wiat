@@ -81,3 +81,7 @@ void Sheep::ifMeatEaten(Organism* other, int power, World* world)
     other->setPower(other->getPower() + power);
     world->removeOrganism(this);
 }
+void Sheep::additionalDeserialize(istream& is) 
+{
+    this->setSpecies("S");
+}

@@ -4,12 +4,13 @@
 #include <utility>
 #include "Position.h"
 #include "Interface/IAction.h"
+#include "Interface/ISeriazible.h"
 
 using namespace std;
 
 class World;
 
-class Organism : public IAction
+class Organism : public IAction, public ISeriazible
 {
 private:
 	int power;
@@ -19,6 +20,10 @@ private:
 	int liveLength;
 	int powerToReproduce;
 	vector<pair<int,int>> ancestors;
+
+protected:
+	virtual void additionalSerialize(ostream& os) = 0;
+	virtual void additionalDeserialize(istream& is) = 0;
 
 public:
 	Organism(int power, Position position);
@@ -46,9 +51,13 @@ public:
 	void setPowerToReproduce(int powerToReproduce);
 	void addAncestor(int birthTurn, int deathTurn);
 	vector<pair<int, int>> getAncestors();
+	void setAncestors(vector<pair<int, int>> ancestors);
 	void decreaseLiveLength();
 
 	string toString();
 
 	virtual void action(World* world) override = 0;
+
+	virtual void serialize(ostream& os) override;
+	virtual void deserialize(istream& is) override;
 };

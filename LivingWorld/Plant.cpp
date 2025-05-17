@@ -23,8 +23,3 @@ void Plant::ifEaten(Organism* other, int power, World* world)
 	other->setPower(other->getPower() + power);
 	world->removeOrganism(this);
 }
-
-void Plant::reproduce(World* world)
-{
-	return;
-}

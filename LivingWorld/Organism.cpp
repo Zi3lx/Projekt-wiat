@@ -64,8 +64,6 @@ Organism& Organism::operator=(Organism&& other) noexcept
 
 Organism::~Organism() {}
 
-void Organism::action(World* world){}
-
 Organism::Organism(int power, Position position)
 {
 	setPower(power);
@@ -130,6 +128,11 @@ vector<pair<int, int>> Organism::getAncestors()
 {
     return ancestors;
 }
+
+void Organism::setAncestors(vector<pair<int, int>> ancestors)
+{
+    this->ancestors = ancestors;
+}
 //---------------------------------------------------------
 // Zad 2
 int Organism::getInitiative()
@@ -166,3 +169,45 @@ void Organism::decreaseLiveLength()
 }
 
 //---------------------------------------------------------
+
+void Organism::serialize(ostream& os)
+{
+    Position position = this->getPosition();
+    os << this->getSpecies() << " "
+       << this->getPower() << " "
+       << position.getX() << " " << position.getY() << " "
+       << this->getInitiative() << " " << this->getLiveLength() << " "
+       << this->getPowerToReproduce() << " "
+       << this->getAncestors().size() << " ";
+    
+    for (const auto& [b, d] : this->getAncestors())
+        os << b << " " << d << " ";
+    
+    additionalSerialize(os);
+
+    os << "\n";
+}
+
+void Organism::deserialize(istream& is) {
+    int x, y, ancestorsSize;
+    
+    int power_val, initiative_val, liveLength_val, powerToReproduce_val;
+    is >> power_val >> x >> y >> initiative_val >> liveLength_val >> powerToReproduce_val >> ancestorsSize;
+    
+    this->setPower(power_val);
+    this->setPosition(Position(x, y));
+    this->setInitiative(initiative_val);
+    this->setLiveLength(liveLength_val);
+    this->setPowerToReproduce(powerToReproduce_val);
+    
+    vector<pair<int, int>> ancestors_val;
+    for (int i = 0; i < ancestorsSize; ++i) {
+        int b, d;
+        is >> b >> d;
+        ancestors_val.emplace_back(b, d);
+    }
+
+    this->setAncestors(ancestors_val);
+
+    additionalDeserialize(is);
+}

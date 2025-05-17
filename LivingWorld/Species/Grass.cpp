@@ -32,3 +32,8 @@ void Grass::reproduce(World* world)
         world->addOrganism(newGrass);
     }
 }
+
+void Grass::additionalDeserialize(istream& is) 
+{
+    this->setSpecies("G");
+}
