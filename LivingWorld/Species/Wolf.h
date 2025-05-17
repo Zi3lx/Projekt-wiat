@@ -7,4 +7,5 @@ public:
     Wolf();
 
     void action(World* world) override;
+    void reproduce(World* world) override;
 };

@@ -1,6 +1,8 @@
+#include <iostream>
 #include "Muchomor.h"
 #include "../World.h"
 
+using namespace std;
 
 Muchomor::Muchomor(int power, Position position) : Plant(power, position) 
 {
@@ -17,11 +19,8 @@ Muchomor::Muchomor() : Plant(0, Position(0, 0)) {
     setPowerToReproduce(4);
 }
 
-void Muchomor::action(World* world) 
+void Muchomor::reproduce(World* world) 
 {
-    Position myPos = this->getPosition();
-
-    // Rozmnazanie
     if (rand() % 5 == this->getPowerToReproduce()) {
         Position freePosition = world->getRandomFreePosition();
         Organism* newMuchomor = new Muchomor(*this);
@@ -35,6 +34,7 @@ void Muchomor::action(World* world)
 }
 
 void Muchomor::ifEaten(Organism* other, int power, World* world) {
+    cout << "Muchomor zabił organizm " << other->getSpecies() << " podczas próby zjedzenia!" << endl;
     world->removeOrganism(this);
     world->removeOrganism(other);
 }

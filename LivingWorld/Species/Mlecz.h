@@ -6,5 +6,5 @@ public:
     Mlecz(int power, Position position);
     Mlecz();
 
-    void action(World* world) override;
+    void reproduce(World* world) override;
 };

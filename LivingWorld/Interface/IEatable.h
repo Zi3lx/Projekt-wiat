@@ -1,4 +1,3 @@
-// IEatable.h
 #pragma once
 
 class Organism;

@@ -110,11 +110,6 @@ string Organism::toString()
 	return result;
 }
 
-void Organism::move(int dx, int dy)
-{
-	position.move(dx, dy);
-}
-
 string Organism::getSpecies()
 {
 	return this->species;

@@ -15,11 +15,8 @@ Mlecz::Mlecz() : Plant(0, Position(0, 0)) {
     setPowerToReproduce(2);
 }
 
-void Mlecz::action(World* world) 
+void Mlecz::reproduce(World* world) 
 {
-    Position myPos = this->getPosition();
-
-    // Nowe mlecze
     Position freePositions = world->getRandomFreePosition();
     if (rand() % 4 == this->getPowerToReproduce()) {
         Organism* newGrass = new Mlecz(*this);

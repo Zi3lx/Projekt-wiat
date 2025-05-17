@@ -14,12 +14,7 @@ Plant::Plant() : Organism()
 
 void Plant::action(World* world)
 {
-	Organism::action(world);
-}
-
-void Plant::move(int dx, int dy)
-{
-	Organism::move(0, 0);
+	reproduce(world);
 }
 
 void Plant::ifEaten(Organism* other, int power, World* world)
@@ -27,4 +22,9 @@ void Plant::ifEaten(Organism* other, int power, World* world)
 	std::cout << "Roślina została zjedzona przez " << other->getSpecies() << std::endl;
 	other->setPower(other->getPower() + power);
 	world->removeOrganism(this);
+}
+
+void Plant::reproduce(World* world)
+{
+	return;
 }

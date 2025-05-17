@@ -15,10 +15,11 @@ Grass::Grass() : Plant(0, Position(0, 0)) {
     setPowerToReproduce(3);
 }
 
-void Grass::action(World* world) {
-    Position myPos = this->getPosition();
 
-    // Nowe trawy
+void Grass::reproduce(World* world) 
+{
+    Position myPos = this->getPosition();
+    
     vector<Position> freePositions = world->getVectorOfFreePositionsAround(myPos);
     if (rand() % 4 == this->getPowerToReproduce() && !freePositions.empty()) {
         int randomPos = rand() % freePositions.size();
@@ -30,5 +31,4 @@ void Grass::action(World* world) {
         
         world->addOrganism(newGrass);
     }
-
 }

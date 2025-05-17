@@ -5,6 +5,6 @@ public:
     Muchomor(int power, Position position);
     Muchomor();
 
-    void action(World* world) override;
     void ifEaten(Organism* other, int power, World* world) override;
+    void reproduce(World* world) override;
 };

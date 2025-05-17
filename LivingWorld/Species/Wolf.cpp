@@ -1,6 +1,6 @@
 #include "Wolf.h"
 #include "../World.h"
-#include "../IMeatEatable.h"
+#include "../Interface/IMeatEatable.h"
 #include <iostream>
 
 Wolf::Wolf(int power, Position position) : Animal(power, position) 
@@ -19,45 +19,13 @@ Wolf::Wolf() : Animal(8, Position(0, 0))
     setPowerToReproduce(16);
 }
 
-void Wolf::action(World* world) 
+void Wolf::reproduce(World* world)
 {
-    bool flag = true;
-    Position myPos = this->getPosition();
-
-    // Zjedzenie
-    for (int dx = -1; dx <= 1 && flag; dx++) 
-    {
-        for (int dy = -1; dy <= 1; dy++) 
-        {
-            if (dx == 0 && dy == 0) continue;
-            
-            int newX = myPos.getX() + dx;
-            int newY = myPos.getY() + dy;
-            
-            if (world->isPositionOnWorld(newX, newY)) 
-            {
-                Organism* organismToEat = world->getOrganismPointerFromPosition(newX, newY);
-
-                if (organismToEat && dynamic_cast<IMeatEatable*>(organismToEat)) 
-                {
-                    IMeatEatable* wolfEatable = dynamic_cast<IMeatEatable*>(organismToEat);
-                    wolfEatable->ifMeatEaten(this, 3, world); 
-                    flag = false;
-                    break;
-                }
-            }
-        }
-    }
-
-    if (flag) Animal::action(world);
-
-    // Rozmnazanie
-    if (this->getPowerToReproduce() < this->getPower())
-    {
-        int newPower = this->getPower() / 2;
+    if (this->getPower() > this->getPowerToReproduce()) {
+        int newPower = this->getPower() - 8;
         this->setPower(newPower);
         
-        vector<Position> freePositions = world->getVectorOfFreePositionsAround(myPos);
+        vector<Position> freePositions = world->getVectorOfFreePositionsAround(getPosition());
         if (!freePositions.empty()) {
             int randomPos = rand() % freePositions.size();
             Wolf* newWolf = new Wolf(*this);
@@ -67,7 +35,40 @@ void Wolf::action(World* world)
             newWolf->addAncestor(world->getTurn(), world->getTurn() + newWolf->getLiveLength());
             world->addOrganism(newWolf);
         }
-        return; 
+    }
+}
+
+void Wolf::action(World* world) 
+{
+    bool hasHunted = false;
+    Position myPos = this->getPosition();
+
+    for (int dx = -1; dx <= 1 && !hasHunted; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            if (dx == 0 && dy == 0) continue;
+            
+            int newX = myPos.getX() + dx;
+            int newY = myPos.getY() + dy;
+            
+            if (world->isPositionOnWorld(newX, newY)) {
+                Organism* nearby = world->getOrganismPointerFromPosition(newX, newY);
+
+                if (nearby != nullptr) {
+                    IMeatEatable* prey = dynamic_cast<IMeatEatable*>(nearby);
+                    if (prey != nullptr) {
+                        prey->ifMeatEaten(this, 2, world);
+                        hasHunted = true;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
+    if (!hasHunted)
+    {
+        move(world);
+    }
+
+    reproduce(world);
 }

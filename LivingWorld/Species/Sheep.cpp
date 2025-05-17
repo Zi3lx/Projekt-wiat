@@ -19,42 +19,13 @@ Sheep::Sheep() : Animal(3, Position(0, 0))
     setPowerToReproduce(6);
 }
 
-void Sheep::action(World* world)
-{   
-    bool flag = true;
-    Position myPos = this->getPosition();
-    
-    // Zjedzenie roślin
-    for (int dx = -1; dx <= 1 && flag; dx++) {
-        for (int dy = -1; dy <= 1; dy++) {
-            if (dx == 0 && dy == 0) continue;
-            
-            int newX = myPos.getX() + dx;
-            int newY = myPos.getY() + dy;
-            
-            if (world->isPositionOnWorld(newX, newY)) {
-                Organism* plantToEat = world->getOrganismPointerFromPosition(newX, newY);
-
-                Plant* organism2 = dynamic_cast<Plant*>(plantToEat);
-                if (organism2 != nullptr) {
-                    organism2->ifEaten(this, 1, world);
-                    flag = false;
-                    break;
-                }
-                    
-            }
-        }
-    }
-    
-    if (flag) Animal::action(world);
-        
-    // Sprawdzenie, czy owca ma wystarczającą moc do reprodukcji
+void Sheep::reproduce(World* world)
+{
     if (this->getPower() > this->getPowerToReproduce()) {
-        
-        int newPower = this->getPower() - 1 ;
+        int newPower = this->getPower() - 1;
         this->setPower(newPower);
         
-        vector<Position> freePositions = world->getVectorOfFreePositionsAround(myPos);
+        std::vector<Position> freePositions = world->getVectorOfFreePositionsAround(getPosition());
         if (!freePositions.empty()) {
             int randomPos = rand() % freePositions.size();
             Sheep* newSheep = new Sheep(*this);
@@ -66,8 +37,42 @@ void Sheep::action(World* world)
 
             world->addOrganism(newSheep);
         }
-        return; 
     }
+}
+
+void Sheep::action(World* world)
+{   
+    bool hasEaten = false;
+    Position myPos = this->getPosition();
+    
+    // Poszukiwanie rośliny do zjedzenia
+    for (int dx = -1; dx <= 1 && !hasEaten; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            if (dx == 0 && dy == 0) continue;
+            
+            int newX = myPos.getX() + dx;
+            int newY = myPos.getY() + dy;
+            
+            if (world->isPositionOnWorld(newX, newY)) {
+                Organism* nearby = world->getOrganismPointerFromPosition(newX, newY);
+
+                if (nearby != nullptr) {
+                    IEatable* plantToEat = dynamic_cast<IEatable*>(nearby);
+                    if (plantToEat != nullptr) {
+                        plantToEat->ifEaten(this, 1, world);
+                        hasEaten = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    if (!hasEaten) {
+        move(world);
+    }
+    
+    reproduce(world);
 }
 
 void Sheep::ifMeatEaten(Organism* other, int power, World* world)

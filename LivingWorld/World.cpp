@@ -64,10 +64,13 @@ World::World(int worldX, int worldY)
 
 World::~World()
 {
-    for (Organism* org : organisms) {
+   vector<Organism*> organismsToDelete = organisms;
+    
+    organisms.clear();
+
+    for (Organism* org : organismsToDelete) {
         delete org;
     }
-    organisms.clear();
 }
 
 int World::getWorldX()
@@ -102,16 +105,12 @@ void World::addOrganism(Organism* organism)
 
 void World::removeOrganism(Organism* organism)
 {
-    cout << "Removing organism: " << organism->getSpecies() << " at " << organism->getPosition().toString() << endl;
+    if (organism == nullptr) return;
     
-    auto it = find(organisms.begin(), organisms.end(), organism);
-    if (it != organisms.end()) {
-        organisms.erase(it);
-        cout << "About to delete organism memory" << endl;
-        delete organism;
-        cout << "Organism deleted successfully" << endl;
-    } else {
-        cout << "Organism not found in collection!" << endl;
+    cout << "Oznaczanie organizmu do usunięcia: " << organism->getSpecies() << " na pozycji " << organism->getPosition().toString() << endl;
+    
+    if (find(organismsToRemove.begin(), organismsToRemove.end(), organism) == organismsToRemove.end()) {
+        organismsToRemove.push_back(organism);
     }
 }
 
@@ -122,24 +121,33 @@ void World::makeTurn()
             return a->getInitiative() > b->getInitiative();
         });
 
-	
-	vector<Organism*> currentOrganisms = organisms;
-
-	for (Organism* org : organisms) {
-		org->decreaseLiveLength();
-		if (org->getLiveLength() == 0) {
-			removeOrganism(org);
-		}
-	}
-	
-	currentOrganisms = organisms;
-
-    for (Organism* org : currentOrganisms) {
-        if (find(organisms.begin(), organisms.end(), org) != organisms.end()) {
+    for (Organism* org : organisms) {
+        org->decreaseLiveLength();
+        if (org->getLiveLength() == 0) {
+            removeOrganism(org);
+        }
+    }
+    
+   vector<Organism*> organismsToProcess = organisms;
+    for (Organism* org : organismsToProcess) {
+        if (find(organismsToRemove.begin(), organismsToRemove.end(), org) == organismsToRemove.end()) {
             org->action(this);
         }
     }
-	turn++;
+    
+    // Teraz faktycznie usuń organizmy oznaczone do usunięcia
+    for (Organism* org : organismsToRemove) {
+        auto it = find(organisms.begin(), organisms.end(), org);
+        if (it != organisms.end()) {
+            organisms.erase(it);
+            delete org;
+            cout << "Organizm usunięty z pamięci" << endl;
+        }
+    }
+    
+    organismsToRemove.clear();
+    
+    turn++;
 }
 
 vector<Organism*> World::getOrganisms()

@@ -6,5 +6,5 @@ public:
     Grass(int power, Position position);
     Grass();
 
-    void action(World* world) override;
+    void reproduce(World* world) override;
 };

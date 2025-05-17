@@ -3,12 +3,13 @@
 #include <vector>
 #include <utility>
 #include "Position.h"
+#include "Interface/IAction.h"
 
 using namespace std;
 
 class World;
 
-class Organism
+class Organism : public IAction
 {
 private:
 	int power;
@@ -49,6 +50,5 @@ public:
 
 	string toString();
 
-	virtual void move(int dx, int dy);
-	virtual void action(World* world);
+	virtual void action(World* world) override = 0;
 };

@@ -1,19 +1,22 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17
-TARGET = bin/LivingWorld
 
 # Katalogi
 SRC_DIR = LivingWorld
+INTERFACE_DIR = $(SRC_DIR)/Interface
 SPECIES_DIR = $(SRC_DIR)/Species
 OBJ_DIR = build
 BIN_DIR = bin
 
-# Źródła
+# Docelowy plik wykonywalny
+TARGET = $(BIN_DIR)/LivingWorld
+
+# Identyfikacja plików źródłowych
 MAIN_SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 SPECIES_SRCS = $(wildcard $(SPECIES_DIR)/*.cpp)
 ALL_SRCS = $(MAIN_SRCS) $(SPECIES_SRCS)
 
-# Obiekty
+# Przekształcenie nazw plików źródłowych na pliki obiektowe
 MAIN_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(MAIN_SRCS))
 SPECIES_OBJS = $(patsubst $(SPECIES_DIR)/%.cpp,$(OBJ_DIR)/Species_%.o,$(SPECIES_SRCS))
 ALL_OBJS = $(MAIN_OBJS) $(SPECIES_OBJS)
@@ -37,16 +40,23 @@ directories:
 $(TARGET): $(ALL_OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-# Reguła kompilacji plików głównego katalogu
+# Reguła kompilacji plików z głównego katalogu
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(SRC_DIR) -I$(INTERFACE_DIR) -c $< -o $@
 
 # Reguła kompilacji plików z podkatalogu Species
 $(OBJ_DIR)/Species_%.o: $(SPECIES_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(SRC_DIR) -I$(INTERFACE_DIR) -c $< -o $@
 
 # Czyszczenie
 clean:
 	rm -rf $(OBJ_DIR)/* $(TARGET)
 
-.PHONY: all clean directories debug
+# Pełne czyszczenie (włącznie z katalogami)
+distclean: clean
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
+
+# Ponowne budowanie projektu
+rebuild: clean all
+
+.PHONY: all clean distclean rebuild directories debug

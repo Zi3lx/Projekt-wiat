@@ -13,6 +13,7 @@ private:
 	int worldY;
 	int turn = 0;
 	vector<Organism*> organisms;
+	vector<Organism*> organismsToRemove;
 	char separator = '.';
 
 public:
