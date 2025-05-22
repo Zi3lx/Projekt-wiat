@@ -22,7 +22,7 @@ Sheep::Sheep() : Animal(3, Position(0, 0))
 void Sheep::reproduce(World* world)
 {
     if (this->getPower() > this->getPowerToReproduce()) {
-        int newPower = this->getPower() - 1;
+        int newPower = this->getPower() - 2;
         this->setPower(newPower);
         
         std::vector<Position> freePositions = world->getVectorOfFreePositionsAround(getPosition());
@@ -57,9 +57,12 @@ void Sheep::action(World* world)
                 Organism* nearby = world->getOrganismPointerFromPosition(newX, newY);
 
                 if (nearby != nullptr) {
+                    Position plantPosition = nearby->getPosition();
                     IEatable* plantToEat = dynamic_cast<IEatable*>(nearby);
-                    if (plantToEat != nullptr) {
+                    if (plantToEat != nullptr) 
+                    {
                         plantToEat->ifEaten(this, 1, world);
+                        this->setPosition(plantPosition);
                         hasEaten = true;
                         break;
                     }

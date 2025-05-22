@@ -32,6 +32,7 @@ void Wolf::reproduce(World* world)
 
             newWolf->setPosition(freePositions[randomPos]);
             newWolf->setPower(newPower);
+            newWolf->setLiveLength(20);
             newWolf->addAncestor(world->getTurn(), world->getTurn() + newWolf->getLiveLength());
             world->addOrganism(newWolf);
         }
@@ -54,9 +55,12 @@ void Wolf::action(World* world)
                 Organism* nearby = world->getOrganismPointerFromPosition(newX, newY);
 
                 if (nearby != nullptr) {
+                    Position preyPosition = nearby->getPosition();
                     IMeatEatable* prey = dynamic_cast<IMeatEatable*>(nearby);
-                    if (prey != nullptr) {
+                    if (prey != nullptr) 
+                    {
                         prey->ifMeatEaten(this, 2, world);
+                        this->setPosition(preyPosition);
                         hasHunted = true;
                         break;
                     }

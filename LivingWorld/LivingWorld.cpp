@@ -13,6 +13,7 @@
 #include "Species/Muchomor.h"
 #include "Species/Wolf.h"
 #include "OrganismFactory.h"
+#include "Graphics3D/Graphics.h"
 
 using namespace std;
 
@@ -208,6 +209,62 @@ void test_ecosystem()
     
     delete ecoWorld;
 }
+void test3D() {
+    World* ecoWorld = new World(15, 15);
+    
+    // Dodawanie organizmów jak w funkcji test_ecosystem()
+    for (int i = 0; i < 10; i++) {
+        int x = rand() % ecoWorld->getWorldX();
+        int y = rand() % ecoWorld->getWorldY();
+        if (ecoWorld->isPositionFree(Position(x, y))) {
+            ecoWorld->addOrganism(new Sheep(3 + rand() % 3, Position(x, y)));
+        }
+    }
+    
+    // Wilki
+    for (int i = 0; i < 3; i++) {
+        int x = rand() % ecoWorld->getWorldX();
+        int y = rand() % ecoWorld->getWorldY();
+        if (ecoWorld->isPositionFree(Position(x, y))) {
+            ecoWorld->addOrganism(new Wolf(8 + rand() % 4, Position(x, y)));
+        }
+    }
+    
+    // Trawa
+    for (int i = 0; i < 35; i++) {
+        int x = rand() % ecoWorld->getWorldX();
+        int y = rand() % ecoWorld->getWorldY();
+        if (ecoWorld->isPositionFree(Position(x, y))) {
+            ecoWorld->addOrganism(new Grass(0, Position(x, y)));
+        }
+    }
+    
+    // Mlecze
+    for (int i = 0; i < 30; i++) {
+        int x = rand() % ecoWorld->getWorldX();
+        int y = rand() % ecoWorld->getWorldY();
+        if (ecoWorld->isPositionFree(Position(x, y))) {
+            ecoWorld->addOrganism(new Mlecz(0, Position(x, y)));
+        }
+    }
+    
+    // Muchomory
+    for (int i = 0; i < 5; i++) {
+        int x = rand() % ecoWorld->getWorldX();
+        int y = rand() % ecoWorld->getWorldY();
+        if (ecoWorld->isPositionFree(Position(x, y))) {
+            ecoWorld->addOrganism(new Muchomor(0, Position(x, y)));
+        }
+    }
+    
+    cout << "Stan początkowy świata:\n";
+    cout << ecoWorld->toString() << endl;
+    
+    renderWorld3D(ecoWorld);
+    
+    delete ecoWorld;
+}
+
 
 void test_serialization() {
     cout << "\n=== TEST SERIALIZACJI ===\n";
@@ -255,7 +312,9 @@ int main()
 {
     srand(time(NULL));
     OrganismFactory::initialize();
-    test_serialization();
+
+    test3D();
+    //test_serialization();
 	//test_ecosystem();
 	//test_owcy();
 	return 0;

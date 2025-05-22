@@ -21,7 +21,7 @@ Muchomor::Muchomor() : Plant(0, Position(0, 0)) {
 
 void Muchomor::reproduce(World* world) 
 {
-    if (rand() % 5 == this->getPowerToReproduce()) {
+    if (rand() % 7 == this->getPowerToReproduce()) {
         Position freePosition = world->getRandomFreePosition();
         Organism* newMuchomor = new Muchomor(*this);
 

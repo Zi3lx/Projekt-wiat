@@ -12,6 +12,7 @@ void OrganismFactory::initialize()
     registerType("T", []() { return new Muchomor(); });
 }
 
+
 void OrganismFactory::registerType(const string& type, CreatorFunction creator) 
 {
     creators[type] = creator;
